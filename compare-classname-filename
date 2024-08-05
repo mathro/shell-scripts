@@ -1,0 +1,26 @@
+$fullFileClasses = Get-ChildItem -Recurse -Path "*.cs"
+foreach ($fullFileClass in $fullFileClasses)
+{
+    $fileName = $fullFileClass | split-path -Leaf | foreach {$_.replace(".cs","")}
+    $insideFileValue = Select-String -Path $fullFileClass -Pattern 'public class' -CaseSensitive
+    $firstClassInFile = ''
+    
+    if (-not ([string]::IsNullOrEmpty($insideFileValue)))
+    {
+        $firstClassInFile = $insideFileValue.ForEach({ (-split $_)[2] })
+        $multipleClassesSplit = $firstClassInFile.split(" ")
+        if ($fileName -eq $firstClassInFile -or $filename -eq $multipleClassesSplit[0])
+        {
+            # Write-Host 'Match!!!!!'
+        }
+        else{
+            Write-Host '1.fileName:' $fileName
+            Write-Host '2.insideFileValue:' $insideFileValue
+            Write-Host '3.firstClassInFile:' $firstClassInFile
+            Write-Host '4.multipleClassFirstClass:' $multipleClassesSplit[0]
+            Write-Host 'NOOOOO Match!!!!!'
+            Write-Host 'end'
+            Write-Host ''
+        }
+    }
+}
