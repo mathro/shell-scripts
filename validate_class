@@ -1,0 +1,45 @@
+Write-Host 'Start validate_class.ps1'
+
+function AsyncMethodHasAsyncSuffix {
+    param (
+        $Class
+    )
+
+    $insideClassValue = (Get-Content $Class) | Select-String 'async (.*) \b(.*)[^Async]\(' -CaseSensitive
+    if (-not ([string]::IsNullOrEmpty($insideClassValue)))
+    {
+        Write-Host 'class '$Class 'has async method without Async suffix' -BackgroundColor Cyan
+        $insideClassValue
+    }
+    else 
+    {
+        # Write-Host 'class '$Class 'has async method without Async suffix' -BackgroundColor Red
+        $insideClassValue
+    }
+}
+
+function HasMultipleLineBreaks {
+    param (
+        $Class
+    )
+
+    $insideClassValue = (Get-Content $Class) | Select-String '[\r\n]' -CaseSensitive
+    $insideClassValue
+    if (-not ([string]::IsNullOrEmpty($insideClassValue)))
+    {
+        Write-Host 'class '$Class 'has multiple line breaks' -BackgroundColor Black
+    }
+    else 
+    {
+        # Write-Host 'class '$Class 'has multiple line breaks' -BackgroundColor DarkMagenta
+    }
+}
+
+$classes = Get-ChildItem -Recurse -Path "*.cs"
+foreach ($class in $classes)
+{
+    AsyncMethodHasAsyncSuffix -Class $class
+    HasMultipleLineBreaks -Class $class
+    # Async-Await
+}
+Write-Host 'End validate_class.ps1'
